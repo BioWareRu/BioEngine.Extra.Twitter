@@ -7,6 +7,7 @@ using BioEngine.Core.Providers;
 using BioEngine.Core.Repository;
 using BioEngine.Extra.Twitter.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Extra.Twitter
 {
@@ -15,13 +16,15 @@ namespace BioEngine.Extra.Twitter
         private readonly SettingsProvider _settingsProvider;
         private readonly TwitterService _twitterService;
         private readonly BioContext _bioContext;
+        private readonly ILogger<TwitterContentFilter> _logger;
 
         public TwitterContentFilter(SettingsProvider settingsProvider, TwitterService twitterService,
-            BioContext bioContext)
+            BioContext bioContext, ILogger<TwitterContentFilter> logger)
         {
             _settingsProvider = settingsProvider;
             _twitterService = twitterService;
             _bioContext = bioContext;
+            _logger = logger;
         }
 
         public override bool CanProcess(Type type)
@@ -34,48 +37,75 @@ namespace BioEngine.Extra.Twitter
             var content = item as ContentItem;
             if (content != null)
             {
-                var itemSettings = await _settingsProvider.Get<TwitterContentSettings>(content);
-
-                if (itemSettings.TwitterId > 0)
+                var sites = await _bioContext.Sites.Where(s => content.SiteIds.Contains(s.Id)).ToListAsync();
+                foreach (var site in sites)
                 {
-                    var deleted = _twitterService.DeleteTweet(itemSettings.TwitterId);
-                    if (!deleted)
+                    var siteSettings = await _settingsProvider.Get<TwitterSiteSettings>(site);
+                    if (!siteSettings.IsEnabled)
                     {
-                        throw new Exception("Can't delete news tweet");
+                        _logger.LogInformation($"Facebook is not enabled for site {site.Title}");
+                        continue;
                     }
 
-                    itemSettings.TwitterId = 0;
-                }
-
-                if (content.IsPublished)
-                {
-                    var text = $"{content.Title} {content.PublicUrl}";
-
-                    var sections = await _bioContext.Set<Section>().Where(s => content.SectionIds.Contains(s.Id))
-                        .ToListAsync();
-                    if (sections.Any())
+                    var twitterConfig = new TwitterServiceConfiguration()
                     {
-                        foreach (var section in sections)
+                        AccessToken = siteSettings.AccessToken,
+                        AccessTokenSecret = siteSettings.AccessTokenSecret,
+                        ConsumerKey = siteSettings.ConsumerKey,
+                        ConsumerSecret = siteSettings.ConsumerSecret
+                    };
+
+                    var itemSettings = await _settingsProvider.Get<TwitterContentSettings>(content);
+
+                    if (itemSettings.TweetId > 0)
+                    {
+                        var deleted = _twitterService.DeleteTweet(itemSettings.TweetId, twitterConfig);
+                        if (!deleted)
                         {
-                            if (!string.IsNullOrEmpty(section.Hashtag))
-                            {
-                                text = $"{text} #{section.Hashtag.Replace("#", "")}";
-                            }
+                            throw new Exception("Can't delete news tweet");
+                        }
+
+                        itemSettings.TweetId = 0;
+                    }
+
+                    if (content.IsPublished)
+                    {
+                        var text = await ConstructText(content, site);
+
+                        var tweetId = _twitterService.CreateTweet(text, twitterConfig);
+                        if (tweetId > 0)
+                        {
+                            itemSettings.TweetId = tweetId;
                         }
                     }
 
-                    var tweetId = _twitterService.CreateTweet(text);
-                    if (tweetId > 0)
-                    {
-                        itemSettings.TwitterId = tweetId;
-                    }
+                    await _settingsProvider.Set(itemSettings, content);
                 }
 
-                await _settingsProvider.Set(itemSettings, content);
                 return true;
             }
 
             return false;
+        }
+
+        private async Task<string> ConstructText(ContentItem content, Site site)
+        {
+            var url = $"{site.Url}{content.PublicUrl}";
+            var text = $"{content.Title} {url}";
+
+            var sections = await _bioContext.Set<Section>().Where(s => content.SectionIds.Contains(s.Id))
+                .ToListAsync();
+            var tags = string.Join(" ",
+                sections
+                    .Where(s => !string.IsNullOrEmpty(s.Hashtag))
+                    .Select(s => $"#{s.Hashtag.Replace("#", "")}")
+            );
+            if (!string.IsNullOrEmpty(tags))
+            {
+                text = $"{text} {tags}";
+            }
+
+            return text;
         }
     }
 }

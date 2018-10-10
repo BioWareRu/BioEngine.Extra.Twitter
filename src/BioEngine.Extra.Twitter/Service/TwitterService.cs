@@ -2,7 +2,6 @@
 using BioEngine.Extra.Twitter.Exceptions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Tweetinvi;
 using Tweetinvi.Models;
 
@@ -13,23 +12,29 @@ namespace BioEngine.Extra.Twitter.Service
     {
         private readonly ILogger<TwitterService> _logger;
 
-        public TwitterService(IOptions<TwitterServiceConfiguration> configuration, ILogger<TwitterService> logger)
+        public TwitterService(ILogger<TwitterService> logger)
         {
             _logger = logger;
-            Auth.SetCredentials(new TwitterCredentials(configuration.Value.ConsumerKey,
-                configuration.Value.ConsumerSecret,
-                configuration.Value.AccessToken, configuration.Value.AccessTokenSecret));
         }
 
-        public long CreateTweet(string text)
+        private void SetAuth(TwitterServiceConfiguration configuration)
         {
+            Auth.SetCredentials(new TwitterCredentials(configuration.ConsumerKey,
+                configuration.ConsumerSecret,
+                configuration.AccessToken, configuration.AccessTokenSecret));
+        }
+
+        public long CreateTweet(string text, TwitterServiceConfiguration configuration)
+        {
+            SetAuth(configuration);
             var tweet = Tweet.PublishTweet(text);
             CheckExceptions();
             return tweet.Id;
         }
 
-        public bool DeleteTweet(long tweetId)
+        public bool DeleteTweet(long tweetId, TwitterServiceConfiguration configuration)
         {
+            SetAuth(configuration);
             var result = Tweet.DestroyTweet(tweetId);
             CheckExceptions("Невозможно удалить старый твит");
             return result;

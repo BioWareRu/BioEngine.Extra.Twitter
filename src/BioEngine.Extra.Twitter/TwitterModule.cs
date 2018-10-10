@@ -1,3 +1,4 @@
+using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
 using BioEngine.Core.Modules;
 using BioEngine.Core.Providers;
@@ -22,6 +23,7 @@ namespace BioEngine.Extra.Twitter
             services.AddScoped<IRepositoryFilter, TwitterContentFilter>();
 
             SettingsProvider.RegisterBioEngineContentSettings<TwitterContentSettings>();
+            SettingsProvider.RegisterBioEngineSettings<TwitterSiteSettings, Site>();
         }
     }
 }
