@@ -32,7 +32,7 @@ namespace BioEngine.Extra.Twitter
             return typeof(ContentItem).IsAssignableFrom(type);
         }
 
-        public override async Task<bool> AfterSave<T, TId>(T item)
+        public override async Task<bool> AfterSave<T, TId>(T item, PropertyChange[] changes = null)
         {
             var content = item as ContentItem;
             if (content != null)
@@ -57,7 +57,10 @@ namespace BioEngine.Extra.Twitter
 
                     var itemSettings = await _settingsProvider.Get<TwitterContentSettings>(content);
 
-                    if (itemSettings.TweetId > 0)
+                    var hasChanges = changes != null && changes.Any(c =>
+                                         c.Name == nameof(content.Title) || c.Name == nameof(content.Url));
+
+                    if (itemSettings.TweetId > 0 && (hasChanges || !content.IsPublished))
                     {
                         var deleted = _twitterService.DeleteTweet(itemSettings.TweetId, twitterConfig);
                         if (!deleted)
@@ -68,7 +71,7 @@ namespace BioEngine.Extra.Twitter
                         itemSettings.TweetId = 0;
                     }
 
-                    if (content.IsPublished)
+                    if (content.IsPublished && (itemSettings.TweetId == 0 || hasChanges))
                     {
                         var text = await ConstructText(content, site);
 
