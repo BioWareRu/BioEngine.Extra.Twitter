@@ -1,8 +1,8 @@
-using BioEngine.Core.Providers;
+using BioEngine.Core.Settings;
 
 namespace BioEngine.Extra.Twitter
 {
-    [SettingsClass(Name = "Публикация в Twitter", Mode = SettingMode.OnePerSite)]
+    [SettingsClass(Name = "Публикация в Twitter", Mode = SettingsMode.OnePerSite)]
     public class TwitterContentSettings : SettingsBase
     {
         [SettingsProperty(Name = "ID твита", Type = SettingType.Number)]
