@@ -32,7 +32,7 @@ namespace BioEngine.Extra.Twitter
             return typeof(ContentItem).IsAssignableFrom(type);
         }
 
-        public override async Task<bool> AfterSave<T, TId>(T item, PropertyChange[] changes = null)
+        public override async Task<bool> AfterSaveAsync<T, TId>(T item, PropertyChange[] changes = null)
         {
             var content = item as ContentItem;
             if (content != null)
@@ -40,7 +40,7 @@ namespace BioEngine.Extra.Twitter
                 var sites = await _bioContext.Sites.Where(s => content.SiteIds.Contains(s.Id)).ToListAsync();
                 foreach (var site in sites)
                 {
-                    var siteSettings = await _settingsProvider.Get<TwitterSiteSettings>(site);
+                    var siteSettings = await _settingsProvider.GetAsync<TwitterSiteSettings>(site);
                     if (!siteSettings.IsEnabled)
                     {
                         _logger.LogInformation($"Facebook is not enabled for site {site.Title}");
@@ -55,7 +55,7 @@ namespace BioEngine.Extra.Twitter
                         ConsumerSecret = siteSettings.ConsumerSecret
                     };
 
-                    var itemSettings = await _settingsProvider.Get<TwitterContentSettings>(content);
+                    var itemSettings = await _settingsProvider.GetAsync<TwitterContentSettings>(content);
 
                     var hasChanges = changes != null && changes.Any(c =>
                                          c.Name == nameof(content.Title) || c.Name == nameof(content.Url));
@@ -73,7 +73,7 @@ namespace BioEngine.Extra.Twitter
 
                     if (content.IsPublished && (itemSettings.TweetId == 0 || hasChanges))
                     {
-                        var text = await ConstructText(content, site);
+                        var text = await ConstructTextAsync(content, site);
 
                         var tweetId = _twitterService.CreateTweet(text, twitterConfig);
                         if (tweetId > 0)
@@ -82,7 +82,7 @@ namespace BioEngine.Extra.Twitter
                         }
                     }
 
-                    await _settingsProvider.Set(itemSettings, content);
+                    await _settingsProvider.SetAsync(itemSettings, content);
                 }
 
                 return true;
@@ -91,7 +91,7 @@ namespace BioEngine.Extra.Twitter
             return false;
         }
 
-        private async Task<string> ConstructText(ContentItem content, Site site)
+        private async Task<string> ConstructTextAsync(ContentItem content, Site site)
         {
             var url = $"{site.Url}{content.PublicUrl}";
             var text = $"{content.Title} {url}";
