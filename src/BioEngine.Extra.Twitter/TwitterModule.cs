@@ -1,7 +1,7 @@
 using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
 using BioEngine.Core.Modules;
-using BioEngine.Core.Settings;
+using BioEngine.Core.Properties;
 using BioEngine.Extra.Twitter.Service;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,8 +22,8 @@ namespace BioEngine.Extra.Twitter
             services.AddSingleton<TwitterService>();
             services.AddScoped<IRepositoryFilter, TwitterContentFilter>();
 
-            SettingsProvider.RegisterBioEngineContentSettings<TwitterContentSettings>();
-            SettingsProvider.RegisterBioEngineSettings<TwitterSiteSettings, Site>();
+            PropertiesProvider.RegisterBioEngineContentProperties<TwitterContentPropertiesSet>();
+            PropertiesProvider.RegisterBioEngineProperties<TwitterSitePropertiesSet, Site>();
         }
     }
 }
