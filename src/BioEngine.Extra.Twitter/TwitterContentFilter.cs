@@ -29,12 +29,12 @@ namespace BioEngine.Extra.Twitter
 
         public override bool CanProcess(Type type)
         {
-            return typeof(ContentItem).IsAssignableFrom(type);
+            return typeof(Post).IsAssignableFrom(type);
         }
 
         public override async Task<bool> AfterSaveAsync<T, TId>(T item, PropertyChange[] changes = null)
         {
-            var content = item as ContentItem;
+            var content = item as Post;
             if (content != null)
             {
                 var sites = await _bioContext.Sites.Where(s => content.SiteIds.Contains(s.Id)).ToListAsync();
@@ -91,7 +91,7 @@ namespace BioEngine.Extra.Twitter
             return false;
         }
 
-        private async Task<string> ConstructTextAsync(ContentItem content, Site site)
+        private async Task<string> ConstructTextAsync(Post content, Site site)
         {
             var url = $"{site.Url}{content.PublicUrl}";
             var text = $"{content.Title} {url}";
