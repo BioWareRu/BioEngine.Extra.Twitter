@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
+using BioEngine.Core.Interfaces;
 using BioEngine.Core.Properties;
 using BioEngine.Core.Repository;
 using BioEngine.Extra.Twitter.Service;
@@ -32,7 +33,8 @@ namespace BioEngine.Extra.Twitter
             return typeof(Post).IsAssignableFrom(type);
         }
 
-        public override async Task<bool> AfterSaveAsync<T>(T item, PropertyChange[] changes = null)
+        public override async Task<bool> AfterSaveAsync<T>(T item, PropertyChange[] changes = null,
+            IBioRepositoryOperationContext operationContext = default(IBioRepositoryOperationContext))
         {
             var content = item as Post;
             if (content != null)
