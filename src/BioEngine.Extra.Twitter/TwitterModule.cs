@@ -22,7 +22,7 @@ namespace BioEngine.Extra.Twitter
                 config.AccessTokenSecret = configuration["BE_TWITTER_ACCESS_TOKEN_SECRET"];
             });
             services.AddSingleton<TwitterService>();
-            services.AddScoped<IRepositoryFilter, TwitterContentFilter>();
+            services.AddScoped<IRepositoryHook, TwitterContentHook>();
 
             PropertiesProvider.RegisterBioEngineContentProperties<TwitterContentPropertiesSet>();
             PropertiesProvider.RegisterBioEngineProperties<TwitterSitePropertiesSet, Site>();

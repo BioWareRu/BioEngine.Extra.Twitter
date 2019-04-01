@@ -11,15 +11,15 @@ using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Extra.Twitter
 {
-    public class TwitterContentFilter : BaseRepositoryFilter
+    public class TwitterContentHook : BaseRepositoryHook
     {
         private readonly PropertiesProvider _propertiesProvider;
         private readonly TwitterService _twitterService;
         private readonly BioContext _bioContext;
-        private readonly ILogger<TwitterContentFilter> _logger;
+        private readonly ILogger<TwitterContentHook> _logger;
 
-        public TwitterContentFilter(PropertiesProvider propertiesProvider, TwitterService twitterService,
-            BioContext bioContext, ILogger<TwitterContentFilter> logger)
+        public TwitterContentHook(PropertiesProvider propertiesProvider, TwitterService twitterService,
+            BioContext bioContext, ILogger<TwitterContentHook> logger)
         {
             _propertiesProvider = propertiesProvider;
             _twitterService = twitterService;
