@@ -44,7 +44,7 @@ namespace BioEngine.Extra.Twitter
                     var sitePropertiesSet = await _propertiesProvider.GetAsync<TwitterSitePropertiesSet>(site);
                     if (!sitePropertiesSet.IsEnabled)
                     {
-                        _logger.LogInformation($"Facebook is not enabled for site {site.Title}");
+                        _logger.LogInformation("Facebook is not enabled for site {siteTitle}", site.Title);
                         continue;
                     }
 
