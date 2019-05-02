@@ -24,8 +24,8 @@ namespace BioEngine.Extra.Twitter
             services.AddSingleton<TwitterService>();
             services.AddScoped<IRepositoryHook, TwitterContentHook>();
 
-            PropertiesProvider.RegisterBioEngineContentProperties<TwitterContentPropertiesSet>();
-            PropertiesProvider.RegisterBioEngineProperties<TwitterSitePropertiesSet, Site>();
+            PropertiesProvider.RegisterBioEngineContentProperties<TwitterContentPropertiesSet>("twittercontent");
+            PropertiesProvider.RegisterBioEngineProperties<TwitterSitePropertiesSet, Site>("twittersite");
         }
     }
 }
