@@ -7,6 +7,9 @@ namespace BioEngine.Extra.Twitter
     {
         [PropertiesElement(Name = "Включено?", Type = PropertyElementType.Checkbox)]
         public bool IsEnabled { get; set; }
+        
+        [PropertiesElement(Name = "Twitter handle", Type = PropertyElementType.String)]
+        public string Handle { get; set; }
 
         [PropertiesElement(Name = "Consumer Key")]
         public string ConsumerKey { get; set; }
