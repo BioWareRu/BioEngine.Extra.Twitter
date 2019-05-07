@@ -3,16 +3,16 @@ using BioEngine.Core.Modules;
 using BioEngine.Core.Properties;
 using BioEngine.Core.Repository;
 using BioEngine.Extra.Twitter.Service;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BioEngine.Extra.Twitter
 {
     public class TwitterModule : BioEngineModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration,
-            IHostingEnvironment environment)
+            IHostEnvironment environment)
         {
             services.Configure<TwitterServiceConfiguration>(config =>
             {
