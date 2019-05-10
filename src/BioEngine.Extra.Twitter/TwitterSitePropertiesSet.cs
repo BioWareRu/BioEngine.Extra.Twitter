@@ -2,25 +2,22 @@ using BioEngine.Core.Properties;
 
 namespace BioEngine.Extra.Twitter
 {
-    [PropertiesSet(Name = "Настройки публикации в Twitter", IsEditable = true)]
+    [PropertiesSet("Настройки публикации в Twitter", IsEditable = true)]
     public class TwitterSitePropertiesSet : PropertiesSet
     {
-        [PropertiesElement(Name = "Включено?", Type = PropertyElementType.Checkbox)]
+        [PropertiesElement("Включено?", PropertyElementType.Checkbox)]
         public bool IsEnabled { get; set; }
-        
-        [PropertiesElement(Name = "Twitter handle", Type = PropertyElementType.String)]
-        public string Handle { get; set; }
 
-        [PropertiesElement(Name = "Consumer Key")]
-        public string ConsumerKey { get; set; }
+        [PropertiesElement("Twitter handle")] public string Handle { get; set; }
 
-        [PropertiesElement(Name = "Consumer Secret", Type = PropertyElementType.PasswordString)]
+        [PropertiesElement("Consumer Key")] public string ConsumerKey { get; set; }
+
+        [PropertiesElement("Consumer Secret", PropertyElementType.PasswordString)]
         public string ConsumerSecret { get; set; }
 
-        [PropertiesElement(Name = "Access token")]
-        public string AccessToken { get; set; }
+        [PropertiesElement("Access token")] public string AccessToken { get; set; }
 
-        [PropertiesElement(Name = "Access token secret", Type = PropertyElementType.PasswordString)]
+        [PropertiesElement("Access token secret", PropertyElementType.PasswordString)]
         public string AccessTokenSecret { get; set; }
     }
 }
