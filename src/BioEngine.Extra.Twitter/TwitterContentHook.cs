@@ -32,11 +32,10 @@ namespace BioEngine.Extra.Twitter
             return typeof(Post).IsAssignableFrom(type);
         }
 
-        public override async Task<bool> AfterSaveAsync<T>(T item, PropertyChange[] changes = null,
-            IBioRepositoryOperationContext operationContext = default(IBioRepositoryOperationContext))
+        public override async Task<bool> AfterSaveAsync<T>(T item, PropertyChange[]? changes = null,
+            IBioRepositoryOperationContext? operationContext = null)
         {
-            var content = item as Post;
-            if (content != null)
+            if (item is Post content)
             {
                 var sites = await _bioContext.Sites.Where(s => content.SiteIds.Contains(s.Id)).ToListAsync();
                 foreach (var site in sites)
@@ -48,7 +47,7 @@ namespace BioEngine.Extra.Twitter
                         continue;
                     }
 
-                    var twitterConfig = new TwitterServiceConfiguration()
+                    var twitterConfig = new TwitterModuleConfig()
                     {
                         AccessToken = sitePropertiesSet.AccessToken,
                         AccessTokenSecret = sitePropertiesSet.AccessTokenSecret,

@@ -17,14 +17,14 @@ namespace BioEngine.Extra.Twitter.Service
             _logger = logger;
         }
 
-        private void SetAuth(TwitterServiceConfiguration configuration)
+        private void SetAuth(TwitterModuleConfig configuration)
         {
             Auth.SetCredentials(new TwitterCredentials(configuration.ConsumerKey,
                 configuration.ConsumerSecret,
                 configuration.AccessToken, configuration.AccessTokenSecret));
         }
 
-        public long CreateTweet(string text, TwitterServiceConfiguration configuration)
+        public long CreateTweet(string text, TwitterModuleConfig configuration)
         {
             SetAuth(configuration);
             var tweet = Tweet.PublishTweet(text);
@@ -32,7 +32,7 @@ namespace BioEngine.Extra.Twitter.Service
             return tweet.Id;
         }
 
-        public bool DeleteTweet(long tweetId, TwitterServiceConfiguration configuration)
+        public bool DeleteTweet(long tweetId, TwitterModuleConfig configuration)
         {
             SetAuth(configuration);
             var result = Tweet.DestroyTweet(tweetId);
@@ -40,7 +40,7 @@ namespace BioEngine.Extra.Twitter.Service
             return result;
         }
 
-        private void CheckExceptions(string message = null)
+        private void CheckExceptions(string? message = null)
         {
             var exc = ExceptionHandler.GetLastException();
             if (exc != null)

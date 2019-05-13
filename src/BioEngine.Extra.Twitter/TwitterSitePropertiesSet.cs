@@ -8,16 +8,16 @@ namespace BioEngine.Extra.Twitter
         [PropertiesElement("Включено?", PropertyElementType.Checkbox)]
         public bool IsEnabled { get; set; }
 
-        [PropertiesElement("Twitter handle")] public string Handle { get; set; }
+        [PropertiesElement("Twitter handle")] public string Handle { get; set; } = "";
 
-        [PropertiesElement("Consumer Key")] public string ConsumerKey { get; set; }
+        [PropertiesElement("Consumer Key")] public string ConsumerKey { get; set; } = "";
 
         [PropertiesElement("Consumer Secret", PropertyElementType.PasswordString)]
-        public string ConsumerSecret { get; set; }
+        public string ConsumerSecret { get; set; } = "";
 
-        [PropertiesElement("Access token")] public string AccessToken { get; set; }
+        [PropertiesElement("Access token")] public string AccessToken { get; set; } = "";
 
         [PropertiesElement("Access token secret", PropertyElementType.PasswordString)]
-        public string AccessTokenSecret { get; set; }
+        public string AccessTokenSecret { get; set; } = "";
     }
 }
