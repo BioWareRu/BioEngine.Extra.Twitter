@@ -43,17 +43,38 @@ namespace BioEngine.Extra.Twitter
                     var sitePropertiesSet = await _propertiesProvider.GetAsync<TwitterSitePropertiesSet>(site);
                     if (!sitePropertiesSet.IsEnabled)
                     {
-                        _logger.LogInformation("Facebook is not enabled for site {siteTitle}", site.Title);
+                        _logger.LogInformation("Twitter is not enabled for site {siteTitle}", site.Title);
                         continue;
                     }
 
-                    var twitterConfig = new TwitterModuleConfig()
+                    if (string.IsNullOrEmpty(sitePropertiesSet.AccessToken))
                     {
-                        AccessToken = sitePropertiesSet.AccessToken,
-                        AccessTokenSecret = sitePropertiesSet.AccessTokenSecret,
-                        ConsumerKey = sitePropertiesSet.ConsumerKey,
-                        ConsumerSecret = sitePropertiesSet.ConsumerSecret
-                    };
+                        _logger.LogError("Twitter access token is not configured for site {siteTitle}", site.Title);
+                        continue;
+                    }
+
+                    if (string.IsNullOrEmpty(sitePropertiesSet.AccessTokenSecret))
+                    {
+                        _logger.LogError("Twitter access token secret is not configured for site {siteTitle}",
+                            site.Title);
+                        continue;
+                    }
+
+                    if (string.IsNullOrEmpty(sitePropertiesSet.ConsumerKey))
+                    {
+                        _logger.LogError("Twitter consumer key is not configured for site {siteTitle}", site.Title);
+                        continue;
+                    }
+
+                    if (string.IsNullOrEmpty(sitePropertiesSet.ConsumerSecret))
+                    {
+                        _logger.LogError("Twitter consumer secret is not configured for site {siteTitle}", site.Title);
+                        continue;
+                    }
+
+                    var twitterConfig = new TwitterModuleConfig(sitePropertiesSet.ConsumerKey,
+                        sitePropertiesSet.ConsumerSecret, sitePropertiesSet.AccessToken,
+                        sitePropertiesSet.AccessTokenSecret);
 
                     var properties = await _propertiesProvider.GetAsync<TwitterContentPropertiesSet>(content);
 

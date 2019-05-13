@@ -47,9 +47,17 @@ namespace BioEngine.Extra.Twitter
 
     public class TwitterModuleConfig
     {
-        public string ConsumerKey { get; set; } = "";
-        public string ConsumerSecret { get; set; } = "";
-        public string AccessToken { get; set; } = "";
-        public string AccessTokenSecret { get; set; } = "";
+        public TwitterModuleConfig(string consumerKey, string consumerSecret, string accessToken, string accessTokenSecret)
+        {
+            ConsumerKey = consumerKey;
+            ConsumerSecret = consumerSecret;
+            AccessToken = accessToken;
+            AccessTokenSecret = accessTokenSecret;
+        }
+
+        public string ConsumerKey { get; }
+        public string ConsumerSecret { get; }
+        public string AccessToken { get; }
+        public string AccessTokenSecret { get; }
     }
 }
