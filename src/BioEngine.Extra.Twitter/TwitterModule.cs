@@ -1,8 +1,8 @@
-using System;
+using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Modules;
 using BioEngine.Core.Properties;
-using BioEngine.Core.Repository;
+using BioEngine.Core.Publishers;
 using BioEngine.Extra.Twitter.Service;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,54 +10,22 @@ using Microsoft.Extensions.Hosting;
 
 namespace BioEngine.Extra.Twitter
 {
-    public class TwitterModule : BioEngineModule<TwitterModuleConfig>
+    public class TwitterModule : BioEngineModule
     {
-        protected override void CheckConfig()
-        {
-            base.CheckConfig();
-            if (string.IsNullOrEmpty(Config.ConsumerKey))
-            {
-                throw new ArgumentException("Twitter consumer key is not set");
-            }
-            if (string.IsNullOrEmpty(Config.ConsumerSecret))
-            {
-                throw new ArgumentException("Twitter consumer secret is not set");
-            }
-            if (string.IsNullOrEmpty(Config.AccessToken))
-            {
-                throw new ArgumentException("Twitter access token is not set");
-            }
-            if (string.IsNullOrEmpty(Config.AccessTokenSecret))
-            {
-                throw new ArgumentException("Twitter access token secret is not set");
-            }
-        }
-
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration,
             IHostEnvironment environment)
         {
-            services.AddSingleton(Config);
             services.AddSingleton<TwitterService>();
-            services.AddScoped<IRepositoryHook, TwitterContentHook>();
+            services.AddScoped<IContentPublisher<TwitterPublishConfig>, TwitterContentPublisher>();
+            services.AddScoped<TwitterContentPublisher>();
 
-            PropertiesProvider.RegisterBioEngineContentProperties<TwitterContentPropertiesSet>("twittercontent");
             PropertiesProvider.RegisterBioEngineProperties<TwitterSitePropertiesSet, Site>("twittersite");
         }
-    }
 
-    public class TwitterModuleConfig
-    {
-        public TwitterModuleConfig(string consumerKey, string consumerSecret, string accessToken, string accessTokenSecret)
+        public override void RegisterEntities(BioEntitiesManager entitiesManager)
         {
-            ConsumerKey = consumerKey;
-            ConsumerSecret = consumerSecret;
-            AccessToken = accessToken;
-            AccessTokenSecret = accessTokenSecret;
+            base.RegisterEntities(entitiesManager);
+            entitiesManager.Register<TwitterPublishRecord>();
         }
-
-        public string ConsumerKey { get; }
-        public string ConsumerSecret { get; }
-        public string AccessToken { get; }
-        public string AccessTokenSecret { get; }
     }
 }
