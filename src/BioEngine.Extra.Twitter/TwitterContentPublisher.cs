@@ -34,7 +34,10 @@ namespace BioEngine.Extra.Twitter
 
             var record = new TwitterPublishRecord
             {
-                ContentId = entity.Id, Type = entity.GetType().FullName, TweetId = tweetId, SiteId = site.Id
+                ContentId = entity.Id,
+                Type = entity.GetType().FullName,
+                TweetId = tweetId,
+                SiteIds = new[] {site.Id}
             };
 
             return Task.FromResult(record);
