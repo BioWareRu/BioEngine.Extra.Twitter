@@ -22,9 +22,9 @@ namespace BioEngine.Extra.Twitter
             PropertiesProvider.RegisterBioEngineProperties<TwitterSitePropertiesSet, Site>("twittersite");
         }
 
-        public override void RegisterEntities(BioEntitiesManager entitiesManager)
+        public override void ConfigureDbContext(BioEntitiesManager entitiesManager)
         {
-            base.RegisterEntities(entitiesManager);
+            base.ConfigureDbContext(entitiesManager);
             entitiesManager.Register<TwitterPublishRecord>();
         }
     }

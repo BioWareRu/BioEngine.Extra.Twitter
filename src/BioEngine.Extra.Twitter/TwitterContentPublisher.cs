@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Publishers;
+using BioEngine.Core.Routing;
 using BioEngine.Extra.Twitter.Service;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Extra.Twitter
@@ -13,15 +15,17 @@ namespace BioEngine.Extra.Twitter
     public class TwitterContentPublisher : BaseContentPublisher<TwitterPublishConfig, TwitterPublishRecord>
     {
         private readonly TwitterService _twitterService;
+        private readonly LinkGenerator _linkGenerator;
 
         public TwitterContentPublisher(TwitterService twitterService, BioContext dbContext,
-            ILogger<IContentPublisher<TwitterPublishConfig>> logger) :
+            ILogger<IContentPublisher<TwitterPublishConfig>> logger, LinkGenerator linkGenerator) :
             base(dbContext, logger)
         {
             _twitterService = twitterService;
+            _linkGenerator = linkGenerator;
         }
 
-        protected override Task<TwitterPublishRecord> DoPublishAsync(IContentEntity entity, Site site,
+        protected override Task<TwitterPublishRecord> DoPublishAsync(ContentItem entity, Site site,
             TwitterPublishConfig config)
         {
             var text = ConstructText(entity, site, config.Tags);
@@ -43,9 +47,9 @@ namespace BioEngine.Extra.Twitter
             return Task.FromResult(record);
         }
 
-        private string ConstructText(IContentEntity content, Site site, List<string> configTags)
+        private string ConstructText(ContentItem content, Site site, IEnumerable<string> configTags)
         {
-            var url = $"{site.Url}{content.PublicUrl}";
+            var url = _linkGenerator.GeneratePublicUrl(content, site);
             var text = $"{content.Title} {url}";
 
             var tags = string.Join(" ", configTags
