@@ -1,4 +1,3 @@
-using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Modules;
 using BioEngine.Core.Properties;
@@ -10,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace BioEngine.Extra.Twitter
 {
-    public class TwitterModule : BioEngineModule
+    public class TwitterModule : BaseBioEngineModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration,
             IHostEnvironment environment)
@@ -20,12 +19,6 @@ namespace BioEngine.Extra.Twitter
             services.AddScoped<TwitterContentPublisher>();
 
             PropertiesProvider.RegisterBioEngineProperties<TwitterSitePropertiesSet, Site>("twittersite");
-        }
-
-        public override void ConfigureDbContext(BioEntitiesManager entitiesManager)
-        {
-            base.ConfigureDbContext(entitiesManager);
-            entitiesManager.Register<TwitterPublishRecord>();
         }
     }
 }
