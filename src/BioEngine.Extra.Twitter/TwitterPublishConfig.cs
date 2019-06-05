@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using BioEngine.Core.Publishers;
+using BioEngine.Core.Social;
 
 namespace BioEngine.Extra.Twitter
 {
