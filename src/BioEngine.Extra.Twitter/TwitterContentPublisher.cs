@@ -25,7 +25,8 @@ namespace BioEngine.Extra.Twitter
             _linkGenerator = linkGenerator;
         }
 
-        protected override Task<TwitterPublishRecord> DoPublishAsync(ContentItem entity, Site site,
+        protected override Task<TwitterPublishRecord> DoPublishAsync(TwitterPublishRecord record, ContentItem entity,
+            Site site,
             TwitterPublishConfig config)
         {
             var text = ConstructText(entity, site, config.Tags);
@@ -36,13 +37,7 @@ namespace BioEngine.Extra.Twitter
                 throw new Exception($"Can't create tweet for item {entity.Title} ({entity.Id.ToString()})");
             }
 
-            var record = new TwitterPublishRecord
-            {
-                ContentId = entity.Id,
-                Type = entity.GetType().FullName,
-                TweetId = tweetId,
-                SiteIds = new[] {site.Id}
-            };
+            record.TweetId = tweetId;
 
             return Task.FromResult(record);
         }
