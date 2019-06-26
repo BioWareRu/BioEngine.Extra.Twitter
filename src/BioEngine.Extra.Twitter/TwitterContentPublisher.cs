@@ -18,8 +18,9 @@ namespace BioEngine.Extra.Twitter
         private readonly LinkGenerator _linkGenerator;
 
         public TwitterContentPublisher(TwitterService twitterService, BioContext dbContext,
+            BioEntitiesManager entitiesManager,
             ILogger<IContentPublisher<TwitterPublishConfig>> logger, LinkGenerator linkGenerator) :
-            base(dbContext, logger)
+            base(dbContext, logger, entitiesManager)
         {
             _twitterService = twitterService;
             _linkGenerator = linkGenerator;
