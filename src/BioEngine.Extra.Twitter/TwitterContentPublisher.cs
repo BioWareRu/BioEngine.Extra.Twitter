@@ -19,7 +19,7 @@ namespace BioEngine.Extra.Twitter
 
         public TwitterContentPublisher(TwitterService twitterService, BioContext dbContext,
             BioEntitiesManager entitiesManager,
-            ILogger<IContentPublisher<TwitterPublishConfig>> logger, LinkGenerator linkGenerator) :
+            ILogger<TwitterContentPublisher> logger, LinkGenerator linkGenerator) :
             base(dbContext, logger, entitiesManager)
         {
             _twitterService = twitterService;
