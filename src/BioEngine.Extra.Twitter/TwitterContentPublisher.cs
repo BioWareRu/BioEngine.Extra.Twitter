@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Core.Abstractions;
 using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Social;
@@ -18,15 +19,14 @@ namespace BioEngine.Extra.Twitter
         private readonly LinkGenerator _linkGenerator;
 
         public TwitterContentPublisher(TwitterService twitterService, BioContext dbContext,
-            BioEntitiesManager entitiesManager,
             ILogger<TwitterContentPublisher> logger, LinkGenerator linkGenerator) :
-            base(dbContext, logger, entitiesManager)
+            base(dbContext, logger)
         {
             _twitterService = twitterService;
             _linkGenerator = linkGenerator;
         }
 
-        protected override Task<TwitterPublishRecord> DoPublishAsync(TwitterPublishRecord record, ContentItem entity,
+        protected override Task<TwitterPublishRecord> DoPublishAsync(TwitterPublishRecord record, IContentItem entity,
             Site site,
             TwitterPublishConfig config)
         {
@@ -43,7 +43,7 @@ namespace BioEngine.Extra.Twitter
             return Task.FromResult(record);
         }
 
-        private string ConstructText(ContentItem content, Site site, IEnumerable<string> configTags)
+        private string ConstructText(IContentItem content, Site site, IEnumerable<string> configTags)
         {
             var url = _linkGenerator.GeneratePublicUrl(content, site);
             var text = $"{content.Title} {url}";
